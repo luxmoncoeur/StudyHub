@@ -46,6 +46,20 @@ async function Content({ params }: Pick<PageProps<"/[course]/[lesson]">, "params
         <p className="mt-2 text-neutral-400">{l.why}</p>
       </header>
 
+      {l.walkthrough?.length ? (
+        <section className="space-y-6">
+          {l.walkthrough.map((w, wi) => (
+            <div key={w.title}>
+              <h2 className="text-lg font-medium text-white"><span className="mr-2 font-mono text-sm" style={{ color: c.accent }}>{wi + 1}.</span>{w.title}</h2>
+              <div className="mt-2 space-y-3 text-[15px] leading-7 text-neutral-300">
+                {w.body.map((b) => <p key={b} dangerouslySetInnerHTML={{ __html: inlineMd(b) }} />)}
+              </div>
+            </div>
+          ))}
+          <h2 className="pt-2 text-sm font-medium uppercase tracking-wider text-neutral-500">Key points</h2>
+        </section>
+      ) : null}
+
       <ul className="space-y-2">
         {l.points.map((p) => (
           <li key={p} className="flex gap-3 text-sm leading-relaxed text-neutral-300">

@@ -4,6 +4,11 @@ import * as webCases from "./cases/web";
 import * as databaseCases from "./cases/database";
 import * as sysadmaCases from "./cases/sysadma";
 import * as sysintaCases from "./cases/sysinta";
+import { walk as iotWalk } from "./walkthroughs/iot";
+import { walk as webWalk } from "./walkthroughs/web";
+import { walk as databaseWalk } from "./walkthroughs/database";
+import { walk as sysadmaWalk } from "./walkthroughs/sysadma";
+import { walk as sysintaWalk } from "./walkthroughs/sysinta";
 import { accounting } from "./accounting";
 import { iot } from "./iot";
 import { database } from "./database";
@@ -38,11 +43,12 @@ function withGuides(c: Course, g: Record<string, Guide>): Course {
 }
 
 // Lesson cases (keyed by lesson slug) + one from-scratch case project per course
-function withCases(c: Course, x: { cases: Record<string, LessonCase[]>; caseProject: Project }): Course {
-  for (const k of Object.keys(x.cases)) if (!c.lessons.some((l) => l.slug === k)) throw new Error(`case "${k}" matches no lesson in ${c.slug}`);
+type Walk = Record<string, NonNullable<Course["lessons"][number]["walkthrough"]>>;
+function withCases(c: Course, x: { cases: Record<string, LessonCase[]>; caseProject: Project }, walk: Walk = {}): Course {
+  for (const k of [...Object.keys(x.cases), ...Object.keys(walk)]) if (!c.lessons.some((l) => l.slug === k)) throw new Error(`"${k}" matches no lesson in ${c.slug}`);
   return {
     ...c,
-    lessons: c.lessons.map((l) => ({ ...l, cases: x.cases[l.slug] ?? l.cases })),
+    lessons: c.lessons.map((l) => ({ ...l, cases: x.cases[l.slug] ?? l.cases, walkthrough: walk[l.slug] ?? l.walkthrough })),
     projects: [x.caseProject, ...c.projects],
   };
 }
@@ -50,11 +56,11 @@ function withCases(c: Course, x: { cases: Record<string, LessonCase[]>; caseProj
 // order matches the enrollment form
 export const courses = [
   withGuides(accounting, { ...accountingGuides, ...accountingBuilds }),
-  withGuides(withCases(iot, iotCases), iotGuides),
-  withGuides(withCases(database, databaseCases), { ...databaseGuides, ...databaseBuilds }),
-  withGuides(withCases(sysadma, sysadmaCases), sysadmaGuides),
-  withGuides(withCases(web, webCases), { ...webGuides, ...webBuilds }),
-  withGuides(withCases(sysinta, sysintaCases), { ...sysintaGuides, ...sysintaBuilds }),
+  withGuides(withCases(iot, iotCases, iotWalk), iotGuides),
+  withGuides(withCases(database, databaseCases, databaseWalk), { ...databaseGuides, ...databaseBuilds }),
+  withGuides(withCases(sysadma, sysadmaCases, sysadmaWalk), sysadmaGuides),
+  withGuides(withCases(web, webCases, webWalk), { ...webGuides, ...webBuilds }),
+  withGuides(withCases(sysinta, sysintaCases, sysintaWalk), { ...sysintaGuides, ...sysintaBuilds }),
   withGuides(capstone, { ...capstoneGuides, ...capstoneBuilds }),
 ];
 export const getCourse = (slug: string) => courses.find((c) => c.slug === slug);

@@ -26,6 +26,8 @@ export type Lesson = {
   /** true = not in CHED syllabus, industry extra */
   beyond?: boolean;
   cases?: LessonCase[];
+  /** step-by-step explanation shown before the key points */
+  walkthrough?: { title: string; body: string[] }[];
 };
 
 /** Real-world scenario: what happened, how to work it out, what to remember */
