@@ -46,6 +46,39 @@ async function Content({ params }: Pick<PageProps<"/[course]/guide/[slug]">, "pa
         </div>
       </header>
 
+      {g.brief && (
+        <section className="rounded-xl border border-amber-500/25 bg-amber-500/[0.04] p-5 text-sm">
+          <p className="text-[11px] font-medium uppercase tracking-wider text-amber-300">Case brief</p>
+          <p className="mt-2 text-neutral-200"><b className="text-white">Client:</b> {g.brief.client}</p>
+          <p className="mt-1 text-neutral-300"><b className="text-white">Problem:</b> {g.brief.problem}</p>
+          <p className="mt-3 font-medium text-white">Requirements</p>
+          <ul className="mt-1 list-disc space-y-1 pl-5 text-neutral-300">{g.brief.requirements.map((r) => <li key={r} dangerouslySetInnerHTML={{ __html: inlineMd(r) }} />)}</ul>
+        </section>
+      )}
+
+      {g.tests?.length ? (
+        <section>
+          <p className="mb-2 text-xs font-medium uppercase tracking-wider text-neutral-500">Test cases (your acceptance checklist)</p>
+          <div className="overflow-x-auto rounded-xl border border-white/10">
+            <table className="w-full text-sm">
+              <thead className="bg-white/[0.03] text-[11px] text-neutral-500">
+                <tr><th className="px-3 py-2 text-left font-medium">ID</th><th className="px-3 py-2 text-left font-medium">Scenario</th><th className="px-3 py-2 text-left font-medium">Steps</th><th className="px-3 py-2 text-left font-medium">Expected</th></tr>
+              </thead>
+              <tbody className="divide-y divide-white/5 align-top">
+                {g.tests.map((t) => (
+                  <tr key={t.id}>
+                    <td className="px-3 py-2 font-mono text-[12px] text-sky-300">{t.id}</td>
+                    <td className="px-3 py-2 text-neutral-200">{t.scenario}</td>
+                    <td className="px-3 py-2 text-neutral-400" dangerouslySetInnerHTML={{ __html: inlineMd(t.steps) }} />
+                    <td className="px-3 py-2 text-emerald-300/90" dangerouslySetInnerHTML={{ __html: inlineMd(t.expected) }} />
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ) : null}
+
       {g.youNeed?.length ? (
         <section className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-neutral-500">You need</p>

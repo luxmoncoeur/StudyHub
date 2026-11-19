@@ -55,6 +55,18 @@ async function Content({ params }: Pick<PageProps<"/[course]/[lesson]">, "params
         ))}
       </ul>
 
+      {l.cases?.map((cs) => (
+        <section key={cs.title} className="rounded-xl border border-amber-500/25 bg-amber-500/[0.04] p-5">
+          <p className="text-[11px] font-medium uppercase tracking-wider text-amber-300">Case</p>
+          <h2 className="mt-1 text-base font-medium text-white">{cs.title}</h2>
+          <p className="mt-2 text-sm leading-relaxed text-neutral-300" dangerouslySetInnerHTML={{ __html: inlineMd(cs.scenario) }} />
+          <ol className="mt-3 list-decimal space-y-1.5 pl-5 text-sm text-neutral-300">
+            {cs.steps.map((st) => <li key={st} dangerouslySetInnerHTML={{ __html: inlineMd(st) }} />)}
+          </ol>
+          <p className="mt-3 border-t border-white/5 pt-3 text-sm text-amber-100/90" dangerouslySetInnerHTML={{ __html: "<b>Takeaway:</b> " + inlineMd(cs.takeaway) }} />
+        </section>
+      ))}
+
       {l.demo && (
         <section>
           <h2 className="mb-3 text-sm font-medium uppercase tracking-wider text-neutral-500">Try it</h2>

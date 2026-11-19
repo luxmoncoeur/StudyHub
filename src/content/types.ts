@@ -25,7 +25,14 @@ export type Lesson = {
   demo?: DemoId;
   /** true = not in CHED syllabus, industry extra */
   beyond?: boolean;
+  cases?: LessonCase[];
 };
+
+/** Real-world scenario: what happened, how to work it out, what to remember */
+export type LessonCase = { title: string; scenario: string; steps: string[]; takeaway: string };
+
+/** Acceptance test case for case projects */
+export type TestCase = { id: string; scenario: string; steps: string; expected: string };
 
 export type GuideStep = {
   title: string;
@@ -49,6 +56,9 @@ export type Guide = {
   done: string[];
   /** optional notes for doing it with real hardware */
   physical?: string[];
+  /** case project: client brief + requirements + acceptance tests */
+  brief?: { client: string; problem: string; requirements: string[] };
+  tests?: TestCase[];
 };
 
 export type Activity = { title: string; steps: string[]; guide?: Guide };
